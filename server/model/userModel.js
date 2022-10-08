@@ -30,9 +30,8 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
 
-    avatar: {
-      public_id: String,
-      url: String,
+    avatarUrl: {
+      type: String,
     },
 
     isArtist: { type: Boolean, required: true, default: false },

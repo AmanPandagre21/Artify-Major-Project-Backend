@@ -3,7 +3,7 @@ const accessTokenSecret = process.env.JWT_ACCESS_TOKEN_SECRET;
 
 class TokenServices {
   /* ------- Generate Tokens Function ---------*/
-  generateTokens(payLoad) {
+  async generateTokens(payLoad) {
     return jwt.sign(payLoad, accessTokenSecret, {
       expiresIn: "30d",
     });
