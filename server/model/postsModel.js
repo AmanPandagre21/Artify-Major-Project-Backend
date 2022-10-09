@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const postsSchema = new mongoose.Schema({
   artist: {
-    type: mongoose.Schema.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
@@ -19,7 +19,7 @@ const postsSchema = new mongoose.Schema({
     required: true,
   },
   category: {
-    type: mongoose.Schema.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
     required: true,
   },

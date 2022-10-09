@@ -1,5 +1,5 @@
-const crypto = require("crypto");
 const User = require("../model/userModel");
+const Posts = require("../model/postsModel");
 const { generateHash } = require("../services/hash-services");
 const { generateOtp } = require("../services/otp-services");
 const {
@@ -272,7 +272,79 @@ exports.userProfiles = async (req, res, next) => {
 
 exports.updateUserProfile = async (req, res, next) => {
   try {
-    res.status(200).json({ success: true });
+    const user = await User.findById(req.user._id);
+
+    const { name, number, bio, avatar } = req.body;
+
+    if (name) user.name = name;
+
+    if (number) user.phone = number;
+
+    if (bio) user.bio = bio;
+
+    if (avatar) user.avatarUrl = avatar;
+
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Profile Updated" });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+};
+
+/* ------- My Posts ---------*/
+
+exports.getMyPosts = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    const posts = [];
+
+    for (let i = 0; i < user.posts.length; i++) {
+      const post = await Posts.findById(user.posts[i]).populate(
+        "artist category likes"
+      );
+      posts.push(post);
+    }
+
+    res.status(200).json({ success: true, posts });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+};
+
+/* ------- get Artist Profile ---------*/
+
+exports.getArtistProfile = async (req, res, next) => {
+  try {
+    const artist = await User.findById(req.params.id).populate("posts");
+
+    if (!artist) {
+      return next(new ErrorHandler("Artist not found", 400));
+    }
+
+    res.status(200).json({ success: true, artist });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+};
+
+/* ------- get Artist Profile Posts ---------*/
+
+exports.getArtistPosts = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    const posts = [];
+
+    for (let i = 0; i < user.posts.length; i++) {
+      const post = await Posts.findById(user.posts[i]).populate(
+        "artist category likes"
+      );
+      posts.push(post);
+    }
+
+    res.status(200).json({ success: true, posts });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }

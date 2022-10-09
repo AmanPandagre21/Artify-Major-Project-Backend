@@ -10,6 +10,7 @@ const {
   changePassword,
   userProfiles,
   profile,
+  updateUserProfile,
 } = require("../controller/userController");
 
 router.route("/register").post(registration);
@@ -24,16 +25,16 @@ router.route("/resetPassword").put(resetPassword);
 
 router.route("/me").get(authMiddleware, profile);
 
-// router.route("/me/update-profile").put(authMiddleware, updateProfile);
+router.route("/me/update-profile").put(authMiddleware, updateUserProfile);
 
 router.route("/me/change-password").get(authMiddleware, changePassword);
 
 router.route("/artists-profiles").get(userProfiles);
 
-// router.route("/my/posts").get(authMiddleware, getMyPosts);
+router.route("/my/posts").get(authMiddleware, getMyPosts);
 
-// router.route("/artist-posts/:id").get(authMiddleware, getUserPosts);
+router.route("/artist-posts/:id").get(authMiddleware, getArtistPosts);
 
-// router.route("/artist/:id").get(authMiddleware, getUserProfile);
+router.route("/artist/:id").get(authMiddleware, getArtistProfile);
 
 module.exports = router;

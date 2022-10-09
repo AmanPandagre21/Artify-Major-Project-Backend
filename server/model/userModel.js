@@ -23,6 +23,11 @@ const userSchema = new mongoose.Schema(
       validate: [validator.isEmail, "Please Enter a valid Email"],
     },
 
+    bio: {
+      type: String,
+      required: false,
+    },
+
     password: {
       type: String,
       required: true,
@@ -36,10 +41,17 @@ const userSchema = new mongoose.Schema(
 
     isArtist: { type: Boolean, required: true, default: false },
 
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Posts",
+      },
+    ],
+
     reviews: [
       {
         user: {
-          type: mongoose.Schema.ObjectId,
+          type: mongoose.Schema.Types.ObjectId,
           ref: "User",
           required: true,
         },
