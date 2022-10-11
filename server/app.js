@@ -14,9 +14,15 @@ app.use(bodyParser.urlencoded({ limt: "50mb", extended: true }));
 
 //import routes
 const user = require("./routes/userRoutes");
+const wishlist = require("./routes/wishlistRoutes");
+const category = require("./routes/categoryRoutes");
+const posts = require("./routes/postsRoutes");
 
 // use routes
 app.use("/api/v1", user);
+app.use("/api/v1", wishlist);
+app.use("/api/v1", category);
+app.use("/api/v1", posts);
 
 // error handler middleware
 app.use(errorMiddleware);

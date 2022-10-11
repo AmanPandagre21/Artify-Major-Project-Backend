@@ -35,7 +35,7 @@ exports.registration = async (req, res, next) => {
     const userInfo = await User.create({
       name,
       email,
-      hashedPassword,
+      password: hashedPassword,
     });
 
     // generate access token

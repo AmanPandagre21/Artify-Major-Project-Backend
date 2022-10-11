@@ -12,14 +12,15 @@ const userSchema = new mongoose.Schema(
 
     phone: {
       type: Number,
-      required: [true, "Please enter a Phone Number"],
+      required: [false, "Please enter a Phone Number"],
       min: [10, "Number should contain 10 Numbers"],
       max: [12, "Number cannot exceed 12 characters"],
     },
 
     email: {
       type: String,
-      required: false,
+      required: [true, "Please enter an email"],
+      unique: [true, "Email already exists"],
       validate: [validator.isEmail, "Please Enter a valid Email"],
     },
 

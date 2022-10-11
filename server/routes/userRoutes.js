@@ -11,6 +11,9 @@ const {
   userProfiles,
   profile,
   updateUserProfile,
+  getMyPosts,
+  getArtistProfile,
+  getArtistPosts,
 } = require("../controller/userController");
 
 router.route("/register").post(registration);
