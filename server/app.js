@@ -26,6 +26,10 @@ app.use("/api/v1", wishlist);
 app.use("/api/v1", category);
 app.use("/api/v1", posts);
 
+app.get("/", (req, res) => {
+  res.send("Server is running");
+});
+
 // error handler middleware
 app.use(errorMiddleware);
 
