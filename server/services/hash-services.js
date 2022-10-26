@@ -4,7 +4,7 @@ class HashServices {
   /* ------- Generate hash Function ---------*/
   async generateHash(data) {
     return crypto
-      .createHmac("sha256", process.env.SECRET_KEY)
+      .createHmac("sha256", process.env.SCERET_KEY)
       .update(data)
       .digest("hex");
   }

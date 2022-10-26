@@ -4,16 +4,19 @@ const authMiddleware = require("../middleware/authMiddleware");
 const {
   createPost,
   likeAndUnlike,
-  updateTitleAndDescription,
+  updatePost,
   deletePost,
+  getPosts,
 } = require("../controller/postController");
 
-router.route("/create-post").post(authMiddleware, createPost);
+router.route("/me/create-post").post(authMiddleware, createPost);
+
+router.route("/posts").get(authMiddleware, getPosts);
 
 router
-  .route("/post:id")
+  .route("/post/:id")
   .get(authMiddleware, likeAndUnlike)
-  .put(authMiddleware, updateTitleAndDescription)
+  .put(authMiddleware, updatePost)
   .delete(authMiddleware, deletePost);
 
 module.exports = router;

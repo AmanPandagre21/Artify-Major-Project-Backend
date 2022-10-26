@@ -3,17 +3,91 @@ const User = require("../model/userModel");
 const ErrorHandler = require("../utils/ErrorHandler");
 
 // create Post
-
 exports.createPost = async (req, res, next) => {
   try {
+    const { title, description, image, category, isForSell, amount } = req.body;
+
+    if (!title || !description || !image || !category) {
+      return next(new ErrorHandler("Required Field", 400));
+    }
+
+    const postData = {
+      title,
+      description,
+      image,
+      category,
+      artist: req.user._id,
+      amount: 0,
+    };
+
+    if (isForSell) {
+      if (!amount) {
+        return next(new ErrorHandler("amount is required", 400));
+      }
+
+      postData.amount = amount;
+    }
+    const post = await Posts.create(postData);
+
+    const user = await User.findById(req.user._id);
+
+    user.posts.unshift(post._id);
+    user.save();
+    res.status(201).json({
+      success: true,
+      message: "Post created",
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+};
+
+// get Posts
+exports.getPosts = async (req, res, next) => {
+  try {
+    const posts = await Posts.find()
+      .sort({ createdAt: -1 })
+      .populate("artist category likes");
+
+    res.status(201).json({
+      success: true,
+      posts,
+    });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }
 };
 
 // update Post
-exports.updateTitleAndDescription = async (req, res, next) => {
+exports.updatePost = async (req, res, next) => {
   try {
+    const post = await Posts.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
+    if (post.artist.toString() !== req.user._id.toString()) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    post.title = req.body.title;
+    post.description = req.body.description;
+
+    if (req.body.outOfStock) {
+      post.outOfStock = true;
+    }
+    await post.save();
+    res.status(200).json({
+      success: true,
+      message: "Post updated",
+    });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }
@@ -22,6 +96,36 @@ exports.updateTitleAndDescription = async (req, res, next) => {
 // like and unlike Post
 exports.likeAndUnlike = async (req, res, next) => {
   try {
+    const post = await Posts.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
+    if (post.likes.includes(req.user._id)) {
+      const index = post.likes.indexOf(req.user._id);
+
+      post.likes.splice(index, 1);
+
+      await post.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Post Unliked",
+      });
+    } else {
+      post.likes.push(req.user._id);
+
+      await post.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Post Liked",
+      });
+    }
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }
@@ -30,6 +134,35 @@ exports.likeAndUnlike = async (req, res, next) => {
 // delete Post
 exports.deletePost = async (req, res, next) => {
   try {
+    const post = await Posts.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
+    if (post.artist.toString() !== req.user._id.toString()) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    await post.remove();
+
+    const user = await User.findById(req.user._id);
+
+    const index = user.posts.indexOf(req.params.id);
+    user.posts.splice(index, 1);
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Post deleted",
+    });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }

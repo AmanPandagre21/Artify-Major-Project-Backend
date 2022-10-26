@@ -12,9 +12,9 @@ const userSchema = new mongoose.Schema(
 
     phone: {
       type: Number,
-      required: [false, "Please enter a Phone Number"],
-      min: [10, "Number should contain 10 Numbers"],
-      max: [12, "Number cannot exceed 12 characters"],
+      minLength: [10, "Number should contain 10 Numbers"],
+      maxLength: [12, "Number cannot exceed 12 characters"],
+      required: false,
     },
 
     email: {

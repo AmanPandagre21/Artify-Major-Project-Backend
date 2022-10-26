@@ -9,7 +9,7 @@ const {
 
 router.route("/add-item").post(addCategory);
 
-router.route("/remove-item").post(removeCategory);
+router.route("/remove-category/:id").delete(removeCategory);
 
 router.route("/categories").get(getAllCategories);
 

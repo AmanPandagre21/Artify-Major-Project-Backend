@@ -1,7 +1,7 @@
 const User = require("../model/userModel");
 const Posts = require("../model/postsModel");
 const { generateHash } = require("../services/hash-services");
-const { generateOtp } = require("../services/otp-services");
+const { generateOtp, verifyOtp } = require("../services/otp-services");
 const {
   generateHashPassword,
   compareHashPassword,
@@ -39,7 +39,7 @@ exports.registration = async (req, res, next) => {
     });
 
     // generate access token
-    const { accessToken } = await generateTokens({ _id: userInfo._id });
+    const accessToken = await generateTokens({ _id: userInfo._id });
 
     res.status(200).json({ success: true, token: accessToken });
   } catch (error) {
@@ -72,7 +72,7 @@ exports.login = async (req, res, next) => {
     }
 
     // generate access token
-    const { accessToken } = await generateTokens({ _id: user._id });
+    const accessToken = await generateTokens({ _id: user._id });
 
     res.status(200).json({ success: true, token: accessToken });
   } catch (error) {
@@ -107,7 +107,7 @@ exports.sendOTP = async (req, res, next) => {
 
     const message = `Your password reset OTP is :- \n\n ${otp} \n\nIf you have not requested this email then, please ignore it.`;
 
-    //send otp to mail
+    // send otp to mail
     await sendEmail({
       email: user.email,
       subject: "Artify Password Recovery Mail",
@@ -116,7 +116,7 @@ exports.sendOTP = async (req, res, next) => {
 
     res
       .status(200)
-      .json({ success: true, hash: `${hash}.${expireTime}`, email });
+      .json({ success: true, hash: `${hash}.${expireTime}`, email, otp });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }
@@ -133,15 +133,15 @@ exports.verifyOTP = async (req, res, next) => {
     }
 
     //   extract the otp hash and expire time from hash
-    const [hashedData, expiresTime] = hash.split(".");
+    const [hashedData, expireTime] = hash.split(".");
 
-    if (Date.now > +expiresTime) {
+    if (Date.now() > expireTime) {
       return next(new ErrorHandler("OTP has expired", 400));
     }
 
     // hash otp
-    const data = `${email}.${otp}.${expiresTime}`;
-    const isValid = await this.verifyOTP(data);
+    const data = `${email}.${otp}.${expireTime}`;
+    const isValid = await verifyOtp(data, hashedData);
 
     //check that otp is corect or not
     if (!isValid) {
@@ -286,7 +286,7 @@ exports.updateUserProfile = async (req, res, next) => {
 
     await user.save();
 
-    res.status(200).json({ success: true, message: "Profile Updated" });
+    res.status(200).json({ success: true, message: "Profile Updated", user });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }

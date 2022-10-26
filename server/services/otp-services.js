@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const { generateHash } = require("../services/hash-services");
 
 class OTPServices {
   /* ------- Generate OTP Function ---------*/

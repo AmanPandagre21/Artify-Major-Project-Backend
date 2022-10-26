@@ -25,7 +25,6 @@ exports.addCategory = async (req, res, next) => {
 // get all categories api
 exports.getAllCategories = async (req, res, next) => {
   try {
-    // add data into db
     const categories = await Category.find();
 
     res.status(200).json({ success: true, categories });
@@ -37,7 +36,6 @@ exports.getAllCategories = async (req, res, next) => {
 // remove category api
 exports.removeCategory = async (req, res, next) => {
   try {
-    // add data into db
     await Category.findByIdAndDelete({ _id: req.params.id });
 
     res
