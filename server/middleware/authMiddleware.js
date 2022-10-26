@@ -1,5 +1,5 @@
 const { verifyAccessToken } = require("../services/token-services");
-const ErrorHandler = require("../utils/errorHandler");
+const ErrorHandler = require("../utils/ErrorHandler");
 const User = require("../model/userModel");
 
 module.exports = async (req, res, next) => {
