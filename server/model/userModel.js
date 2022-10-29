@@ -37,7 +37,8 @@ const userSchema = new mongoose.Schema(
     },
 
     avatarUrl: {
-      type: String,
+      name: { type: String },
+      url: { type: String },
     },
 
     isArtist: { type: Boolean, required: true, default: false },

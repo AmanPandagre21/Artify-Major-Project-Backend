@@ -282,8 +282,10 @@ exports.updateUserProfile = async (req, res, next) => {
 
     if (bio) user.bio = bio;
 
-    if (avatar) user.avatarUrl = avatar;
-
+    if (avatar) {
+      user.avatarUrl.name = avatar.name;
+      user.avatarUrl.url = avatar.url;
+    }
     await user.save();
 
     res.status(200).json({ success: true, message: "Profile Updated", user });
