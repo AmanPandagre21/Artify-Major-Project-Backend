@@ -7,6 +7,7 @@ const {
   updatePost,
   deletePost,
   getPosts,
+  postDetails,
 } = require("../controller/postController");
 
 router.route("/me/create-post").post(authMiddleware, createPost);
@@ -15,6 +16,7 @@ router.route("/posts").get(authMiddleware, getPosts);
 
 router
   .route("/post/:id")
+  .get(authMiddleware, postDetails)
   .get(authMiddleware, likeAndUnlike)
   .put(authMiddleware, updatePost)
   .delete(authMiddleware, deletePost);

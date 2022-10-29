@@ -203,7 +203,7 @@ exports.changePassword = async (req, res, next) => {
     //get data from body
     const { oldPassword, password, confirmPassword } = req.body;
 
-    if (!password && !confirmPassword && !oldPassword) {
+    if (!password || !confirmPassword || !oldPassword) {
       return next(new ErrorHandler("All fields are Mandatory", 400));
     }
 
