@@ -30,7 +30,7 @@ router.route("/me").get(authMiddleware, profile);
 
 router.route("/me/update-profile").put(authMiddleware, updateUserProfile);
 
-router.route("/me/change-password").get(authMiddleware, changePassword);
+router.route("/me/change-password").put(authMiddleware, changePassword);
 
 router.route("/artists-profiles").get(userProfiles);
 
