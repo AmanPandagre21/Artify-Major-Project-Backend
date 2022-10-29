@@ -1,20 +1,29 @@
 const Posts = require("../model/postsModel");
 const User = require("../model/userModel");
 const ErrorHandler = require("../utils/ErrorHandler");
+const cloudinary = require("cloudinary");
 
 // create Post
 exports.createPost = async (req, res, next) => {
   try {
-    const { title, description, image, category, isForSell, amount } = req.body;
+    const { title, description, category, isForSell, amount } = req.body;
 
-    if (!title || !description || !image || !category) {
+    const image = req.files.avatar.tempFilePath;
+    if (!title || !description || !category) {
       return next(new ErrorHandler("Required Field", 400));
     }
+
+    const myCloud = await cloudinary.v2.uploader.upload(image, {
+      folder: "artify/posts",
+    });
 
     const postData = {
       title,
       description,
-      image,
+      image: {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      },
       category,
       artist: req.user._id,
       amount: 0,
@@ -169,6 +178,7 @@ exports.deletePost = async (req, res, next) => {
         message: "Unauthorized",
       });
     }
+    await cloudinary.v2.uploader.destroy(post.image.public_id);
 
     await post.remove();
 

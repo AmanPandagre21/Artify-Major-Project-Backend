@@ -8,6 +8,7 @@ const {
 } = require("../services/password-services");
 const { generateTokens } = require("../services/token-services");
 const sendEmail = require("../utils/sendMail");
+const cloudinary = require("cloudinary");
 const ErrorHandler = require("../utils/ErrorHandler");
 
 /* ------- User Registration ---------*/
@@ -274,7 +275,8 @@ exports.updateUserProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
 
-    const { name, number, bio, avatar } = req.body;
+    const { name, number, bio } = req.body;
+    const avatar = req.files.avatar.tempFilePath;
 
     if (name) user.name = name;
 
@@ -283,9 +285,18 @@ exports.updateUserProfile = async (req, res, next) => {
     if (bio) user.bio = bio;
 
     if (avatar) {
-      user.avatarUrl.name = avatar.name;
-      user.avatarUrl.url = avatar.url;
+      await cloudinary.v2.uploader.destroy(user.avatar.public_id);
     }
+
+    const mycloud = await cloudinary.v2.uploader.upload(avatar, {
+      folder: "artify/avatars",
+    });
+
+    user.avatar = {
+      public_id: mycloud.public_id,
+      url: mycloud.secure_url,
+    };
+
     await user.save();
 
     res.status(200).json({ success: true, message: "Profile Updated", user });
