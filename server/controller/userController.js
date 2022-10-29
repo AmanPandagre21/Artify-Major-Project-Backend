@@ -285,9 +285,11 @@ exports.updateUserProfile = async (req, res, next) => {
 
     if (bio) user.bio = bio;
 
-    if (avatar) {
-      await cloudinary.v2.uploader.destroy(user.avatar.public_id);
-    }
+    // if (avatar) {
+    //   await cloudinary.v2.uploader.destroy(
+    //     user.avatar.public_id && user.avatar.public_id
+    //   );
+    // }
 
     const mycloud = await cloudinary.v2.uploader.upload(avatar, {
       folder: "artify/avatars",
