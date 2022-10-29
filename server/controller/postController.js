@@ -2,6 +2,7 @@ const Posts = require("../model/postsModel");
 const User = require("../model/userModel");
 const ErrorHandler = require("../utils/ErrorHandler");
 const cloudinary = require("cloudinary");
+const fs = require("fs");
 
 // create Post
 exports.createPost = async (req, res, next) => {
@@ -16,7 +17,7 @@ exports.createPost = async (req, res, next) => {
     const myCloud = await cloudinary.v2.uploader.upload(image, {
       folder: "artify/posts",
     });
-
+    fs.rmSync("./tmp", { recursive: true });
     const postData = {
       title,
       description,

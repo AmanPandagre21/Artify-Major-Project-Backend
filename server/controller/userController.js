@@ -10,6 +10,7 @@ const { generateTokens } = require("../services/token-services");
 const sendEmail = require("../utils/sendMail");
 const cloudinary = require("cloudinary");
 const ErrorHandler = require("../utils/ErrorHandler");
+const fs = require("fs");
 
 /* ------- User Registration ---------*/
 
@@ -291,7 +292,7 @@ exports.updateUserProfile = async (req, res, next) => {
     const mycloud = await cloudinary.v2.uploader.upload(avatar, {
       folder: "artify/avatars",
     });
-
+    fs.rmSync("./tmp", { recursive: true });
     user.avatar = {
       public_id: mycloud.public_id,
       url: mycloud.secure_url,
