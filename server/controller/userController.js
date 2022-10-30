@@ -368,3 +368,23 @@ exports.getArtistPosts = async (req, res, next) => {
     return next(new ErrorHandler(error.message, 500));
   }
 };
+
+/* ------- contact form ---------*/
+
+exports.reportQuery = async (req, res, next) => {
+  try {
+    const { name, number, email, query } = req.body;
+
+    const message = `Name = ${name} email = ${email} number = ${number} Query = ${query}`;
+    // send otp to mail
+    await sendEmail({
+      email: "gehloth03@gmail.com",
+      subject: "Artify User Query Mail",
+      message,
+    });
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+};

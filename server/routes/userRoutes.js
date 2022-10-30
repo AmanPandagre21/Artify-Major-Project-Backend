@@ -14,6 +14,7 @@ const {
   getMyPosts,
   getArtistProfile,
   getArtistPosts,
+  reportQuery,
 } = require("../controller/userController");
 
 router.route("/register").post(registration);
@@ -39,5 +40,7 @@ router.route("/my/posts").get(authMiddleware, getMyPosts);
 router.route("/artist-posts/:id").get(authMiddleware, getArtistPosts);
 
 router.route("/artist/:id").get(authMiddleware, getArtistProfile);
+
+router.route("/report").post(authMiddleware, reportQuery);
 
 module.exports = router;
