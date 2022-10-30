@@ -277,8 +277,8 @@ exports.updateUserProfile = async (req, res, next) => {
     const user = await User.findById(req.user._id);
 
     const { name, number, bio } = req.body;
-    console.log(req.files.avatar.tempFilePath);
-    const avatar = req.files.avatar.tempFilePath;
+    console.log(req.file.path);
+    const avatar = req.file.path;
 
     if (name) user.name = name;
 
