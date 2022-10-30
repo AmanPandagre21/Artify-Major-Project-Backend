@@ -285,16 +285,18 @@ exports.updateUserProfile = async (req, res, next) => {
 
     if (bio) user.bio = bio;
 
-    // if (avatar) {
-    //   await cloudinary.v2.uploader.destroy(
-    //     user.avatar.public_id && user.avatar.public_id
-    //   );
-    // }
+    if (user.avatar.public_id && avatar) {
+      await cloudinary.v2.uploader.destroy(
+        user.avatar.public_id && user.avatar.public_id
+      );
+    }
 
     const mycloud = await cloudinary.v2.uploader.upload(avatar, {
       folder: "artify/avatars",
     });
+
     fs.rmSync("./tmp", { recursive: true });
+
     user.avatar = {
       public_id: mycloud.public_id,
       url: mycloud.secure_url,
