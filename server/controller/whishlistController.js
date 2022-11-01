@@ -5,11 +5,15 @@ const WishList = require("../model/wishListModel");
 exports.addToWhishList = async (req, res, next) => {
   try {
     // get the params id and add post into wishlist collection
-    const list = await WishList.findById({ postId: req.params.id });
+    const list = await WishList.findOne({ postId: req.params.id });
+    if (list) {
+      return next(new ErrorHandler("item already present in list", 400));
+    }
+    const lists = await WishList.create({ postId: req.params.id });
 
     res
       .status(200)
-      .json({ success: true, message: "Item added into Wishlist", list });
+      .json({ success: true, message: "Item added into Wishlist" });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }
@@ -19,8 +23,8 @@ exports.addToWhishList = async (req, res, next) => {
 exports.getAllItemsFromWhishList = async (req, res, next) => {
   try {
     // get all items
-    const lists = await WishList.find();
-
+    const lists = await WishList.find().populate("postId");
+    console.log(lists);
     res.status(200).json({ success: true, lists });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
