@@ -72,7 +72,9 @@ exports.getPosts = async (req, res, next) => {
 //get Post Details
 exports.postDetails = async (req, res, next) => {
   try {
-    const post = await Posts.findById(req.params.id);
+    const post = await Posts.findById(req.params.id).populate(
+      "artist category likes"
+    );
     if (!post) {
       return res.status(404).json({
         success: false,
