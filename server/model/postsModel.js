@@ -33,7 +33,6 @@ const postsSchema = new mongoose.Schema(
     isForSell: { type: Boolean, default: false },
     amount: {
       type: Number,
-      required: true,
       default: 0,
     },
     outOfStock: {

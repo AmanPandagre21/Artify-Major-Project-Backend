@@ -10,6 +10,7 @@ exports.createPost = async (req, res, next) => {
     const { title, description, category, isForSell, amount } = req.body;
 
     const image = req.files.image.tempFilePath;
+
     if (!title || !description || !category) {
       return next(new ErrorHandler("Required Field", 400));
     }
