@@ -24,7 +24,6 @@ exports.getAllItemsFromWhishList = async (req, res, next) => {
   try {
     // get all items
     const lists = await WishList.find().populate("postId");
-    console.log(lists);
     res.status(200).json({ success: true, lists });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
