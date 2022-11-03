@@ -9,7 +9,10 @@ exports.addToWhishList = async (req, res, next) => {
     if (list) {
       return next(new ErrorHandler("item already present in list", 400));
     }
-    const lists = await WishList.create({ postId: req.params.id });
+    const lists = await WishList.create({
+      postId: req.params.id,
+      artistId: req.user._id,
+    });
 
     res
       .status(200)
