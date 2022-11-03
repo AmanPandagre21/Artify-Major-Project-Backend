@@ -6,6 +6,10 @@ const wishListSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Posts",
     },
+    artistId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   {
     timestamps: true,
