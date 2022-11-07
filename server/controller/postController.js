@@ -3,6 +3,7 @@ const User = require("../model/userModel");
 const ErrorHandler = require("../utils/ErrorHandler");
 const cloudinary = require("cloudinary");
 const fs = require("fs");
+const ApiFeature = require("../utils/ApiFeature");
 
 // create Post
 exports.createPost = async (req, res, next) => {
@@ -56,9 +57,10 @@ exports.createPost = async (req, res, next) => {
 // get Posts
 exports.getPosts = async (req, res, next) => {
   try {
-    const posts = await Posts.find()
-      .sort({ createdAt: -1 })
-      .populate("artist category likes");
+    const apiFeature = new ApiFeature(Posts.find(), req.query).search();
+    // .filter();
+
+    const posts = await apiFeature.query;
 
     res.status(201).json({
       success: true,
