@@ -12,10 +12,6 @@ class ApiFeature {
             $regex: this.queryStr.keyword,
             $options: "i",
           },
-          // description: {
-          //   $regex: this.queryStr.keyword,
-          //   $options: "i",
-          // },
         }
       : {};
 
@@ -26,12 +22,6 @@ class ApiFeature {
 
     return this;
   }
-
-  // filter
-  //     filter() {
-  //         const queryStr = { ...this.queryStr };
-
-  //   }
 }
 
 module.exports = ApiFeature;

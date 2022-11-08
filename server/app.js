@@ -26,12 +26,16 @@ const user = require("./routes/userRoutes");
 const wishlist = require("./routes/wishlistRoutes");
 const category = require("./routes/categoryRoutes");
 const posts = require("./routes/postsRoutes");
+const order = require("./routes/orderRoute");
+const payment = require("./routes/paymentRoute");
 
 // use routes
 app.use("/api/v1", user);
 app.use("/api/v1", wishlist);
 app.use("/api/v1", category);
 app.use("/api/v1", posts);
+app.use("/api/v1", order);
+app.use("/api/v1", payment);
 
 app.get("/", (req, res) => {
   res.send("Server is running");
