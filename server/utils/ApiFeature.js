@@ -12,10 +12,10 @@ class ApiFeature {
             $regex: this.queryStr.keyword,
             $options: "i",
           },
-          description: {
-            $regex: this.queryStr.keyword,
-            $options: "i",
-          },
+          // description: {
+          //   $regex: this.queryStr.keyword,
+          //   $options: "i",
+          // },
         }
       : {};
 
