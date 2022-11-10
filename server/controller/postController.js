@@ -21,6 +21,28 @@ exports.createPost = async (req, res, next) => {
       return next(new ErrorHandler("Required Field", 400));
     }
 
+    model
+      .classify({
+        imageUrl: image,
+      })
+      .then((predictions) => {
+        console.log(prediction);
+        res.json({
+          code: 200,
+          status: "success",
+          predictions,
+        });
+        next();
+      })
+      .catch((e) => {
+        console.log("error", e);
+        res.status(500).send({
+          code: 500,
+          status: "fail",
+          message: "Something went wrong!",
+        });
+      });
+
     const myCloud = await cloudinary.v2.uploader.upload(image, {
       folder: "artify/posts",
     });
