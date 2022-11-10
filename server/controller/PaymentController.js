@@ -5,7 +5,7 @@ const Order = require("../model/orderModel");
 //
 exports.checkout = async (req, res, next) => {
   try {
-    const { amount } = req.body.amount;
+    const { amount } = req.body;
     console.log(amount);
     if (!amount) {
       return next(new ErrorHandler("please enter amount", 400));
