@@ -4,6 +4,11 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const cloudinary = require("cloudinary");
 const fs = require("fs");
 const ApiFeature = require("../utils/ApiFeature");
+const TeachableMachine = require("@sashido/teachablemachine-node");
+
+const model = new TeachableMachine({
+  modelUrl: "https://teachablemachine.withgoogle.com/models/btUwbk0c8/",
+});
 
 // create Post
 exports.createPost = async (req, res, next) => {

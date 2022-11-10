@@ -20,7 +20,6 @@ app.use(
   })
 );
 app.use(cors());
-app.use("/stripe", express.raw({ type: "*/*" }));
 
 //import routes
 const user = require("./routes/userRoutes");
