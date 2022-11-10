@@ -11,7 +11,7 @@ exports.checkout = async (req, res, next) => {
       return next(new ErrorHandler("please enter amount", 400));
     }
     const myPayment = await stripe.paymentIntents.create({
-      amount: Math.round(),
+      amount: amount,
       currency: "INR",
       payment_method_types: ["card"],
     });
