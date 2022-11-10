@@ -35,6 +35,7 @@ exports.createPost = async (req, res, next) => {
           status: "success",
           predictions,
         });
+        console.log("working  ");
         next();
       })
       .catch((e) => {
