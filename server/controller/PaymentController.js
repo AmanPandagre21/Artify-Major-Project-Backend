@@ -6,12 +6,9 @@ const Order = require("../model/orderModel");
 exports.checkout = async (req, res, next) => {
   try {
     const myPayment = await stripe.paymentIntents.create({
-      amount: req.body.amount,
+      amount: Math.round(req.body.amount),
       currency: "INR",
       payment_method_types: ["card"],
-      metadata: {
-        company: "Artify",
-      },
     });
     res.status(200).json({
       success: true,
