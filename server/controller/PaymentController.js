@@ -5,8 +5,12 @@ const Order = require("../model/orderModel");
 //
 exports.checkout = async (req, res, next) => {
   try {
+    const { amount } = req.body.amount;
+    if (!amount) {
+      return next(new ErrorHandler("please enter amount", 400));
+    }
     const myPayment = await stripe.paymentIntents.create({
-      amount: Math.round(req.body.amount),
+      amount: Math.round(),
       currency: "INR",
       payment_method_types: ["card"],
     });
