@@ -30,7 +30,7 @@ exports.createPost = async (req, res, next) => {
       })
       .then((predictions) => {
         console.log(predictions);
-        predict = predictions;
+        predict = [...predictions];
         console.log(predict);
         // res.json({
         //   code: 200,
