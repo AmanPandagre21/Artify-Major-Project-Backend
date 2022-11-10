@@ -26,7 +26,7 @@ exports.createPost = async (req, res, next) => {
     console.log(imgUrl);
     model
       .classify({
-        imageUrl: imgUrl,
+        imageUrl: `data:${req.files.image.mimetype};base64,/${imgUrl}`,
       })
       .then((predictions) => {
         console.log(predictions);
