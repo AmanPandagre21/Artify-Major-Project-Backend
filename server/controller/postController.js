@@ -13,26 +13,30 @@ const model = new TeachableMachine({
 // create Post
 exports.createPost = async (req, res, next) => {
   try {
-    const { title, description, category, isForSell, amount } = req.body;
+    const { title, description, category, isForSell, amount, imgUrl } =
+      req.body;
 
     const image = req.files.image.tempFilePath;
+
+    const predict = [];
 
     if (!title || !description || !category) {
       return next(new ErrorHandler("Required Field", 400));
     }
-    console.log(image);
+    console.log(req.body.imgUrl);
     model
       .classify({
-        imageUrl: image,
+        imageUrl: imgUrl,
       })
       .then((predictions) => {
-        console.log(prediction);
-        res.json({
-          code: 200,
-          status: "success",
-          predictions,
-        });
-        next();
+        console.log(predictions);
+        predict = predictions;
+        console.log(predict);
+        // res.json({
+        //   code: 200,
+        //   status: "success",
+        //   predictions,
+        // });
       })
       .catch((e) => {
         console.log("error", e);
@@ -43,39 +47,43 @@ exports.createPost = async (req, res, next) => {
         });
       });
 
-    const myCloud = await cloudinary.v2.uploader.upload(image, {
-      folder: "artify/posts",
-    });
-    fs.rmSync("./tmp", { recursive: true });
-    const postData = {
-      title,
-      description,
-      image: {
-        public_id: myCloud.public_id,
-        url: myCloud.secure_url,
-      },
-      category,
-      artist: req.user._id,
-      amount: 0,
-    };
+    if (predict[0].class === "insensitive") {
+      const myCloud = await cloudinary.v2.uploader.upload(image, {
+        folder: "artify/posts",
+      });
+      fs.rmSync("./tmp", { recursive: true });
+      const postData = {
+        title,
+        description,
+        image: {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        },
+        category,
+        artist: req.user._id,
+        amount: 0,
+      };
 
-    if (isForSell) {
-      if (!amount) {
-        return next(new ErrorHandler("amount is required", 400));
+      if (isForSell) {
+        if (!amount) {
+          return next(new ErrorHandler("amount is required", 400));
+        }
+
+        postData.amount = amount;
       }
+      const post = await Posts.create(postData);
 
-      postData.amount = amount;
+      const user = await User.findById(req.user._id);
+
+      user.posts.unshift(post._id);
+      user.save();
+      res.status(201).json({
+        success: true,
+        message: "Post created",
+      });
+    } else {
+      return next(new ErrorHandler("Image is sensitive", 400));
     }
-    const post = await Posts.create(postData);
-
-    const user = await User.findById(req.user._id);
-
-    user.posts.unshift(post._id);
-    user.save();
-    res.status(201).json({
-      success: true,
-      message: "Post created",
-    });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }
