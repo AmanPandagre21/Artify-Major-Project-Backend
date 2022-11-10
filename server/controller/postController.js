@@ -7,7 +7,7 @@ const ApiFeature = require("../utils/ApiFeature");
 const TeachableMachine = require("@sashido/teachablemachine-node");
 
 const model = new TeachableMachine({
-  modelUrl: "https://teachablemachine.withgoogle.com/models/btUwbk0c8/",
+  modelUrl: "https://teachablemachine.withgoogle.com/models/UOr4hlqlP/",
 });
 
 // create Post
@@ -20,7 +20,7 @@ exports.createPost = async (req, res, next) => {
     if (!title || !description || !category) {
       return next(new ErrorHandler("Required Field", 400));
     }
-
+    console.log(image);
     model
       .classify({
         imageUrl: image,
