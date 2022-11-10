@@ -8,14 +8,14 @@ exports.checkout = async (req, res, next) => {
     const myPayment = await stripe.paymentIntents.create({
       amount: req.body.amount,
       currency: "INR",
+      payment_method_types: ["card"],
       metadata: {
         company: "Artify",
       },
-      payment_method_types: ["card"],
     });
     res.status(200).json({
       success: true,
-      client_secret: myPayment.client_secret,
+      clientSecret: myPayment.client_secret,
     });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
