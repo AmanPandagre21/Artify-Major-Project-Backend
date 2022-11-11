@@ -23,7 +23,7 @@ exports.createPost = async (req, res, next) => {
     if (!title || !description || !category) {
       return next(new ErrorHandler("Required Field", 400));
     }
-    console.log(imgUrl);
+    console.log(req.files);
     model
       .classify({
         imageUrl: imgUrl,
