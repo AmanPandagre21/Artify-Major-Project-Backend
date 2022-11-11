@@ -51,6 +51,21 @@ exports.getMyOrder = async (req, res, next) => {
   }
 };
 
+//get Order by id
+
+exports.getMyOrderHistory = async (req, res, next) => {
+  try {
+    const orders = await Order.find({
+      buyer: req.user._id,
+      orderStatus: "Delivered",
+    });
+
+    res.status(200).json({ success: true, orders });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+};
+
 exports.updateOrder = async (req, res, next) => {
   try {
     const { orderId } = req.body;
