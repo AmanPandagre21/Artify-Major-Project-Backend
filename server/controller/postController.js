@@ -23,10 +23,9 @@ exports.createPost = async (req, res, next) => {
     if (!title || !description || !category) {
       return next(new ErrorHandler("Required Field", 400));
     }
-    console.log(req.files);
     model
       .classify({
-        imageUrl: imgUrl,
+        imageUrl: "data:image/jpeg;base64," + imgUrl,
       })
       .then((predictions) => {
         console.log(predictions);
