@@ -9,6 +9,7 @@ const {
   getPosts,
   postDetails,
 } = require("../controller/postController");
+const { imagePredictor } = require("../utils/imagePredictor");
 
 router.route("/me/create-post").post(authMiddleware, createPost);
 

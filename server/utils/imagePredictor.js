@@ -4,13 +4,13 @@ const model = new TeachableMachine({
   modelUrl: "https://teachablemachine.withgoogle.com/models/UOr4hlqlP/",
 });
 
-module.exports = (req, res, imgUrl, callback) => {
+module.exports = (req, res, next) => {
+  const { imgUrl } = req.body;
   model
     .classify({
       imageUrl: imgUrl,
     })
     .then((predictions) => {
-      callback(null, predictions);
       res.json({
         success: true,
         predictions,

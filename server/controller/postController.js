@@ -4,6 +4,7 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const cloudinary = require("cloudinary");
 const fs = require("fs");
 const ApiFeature = require("../utils/ApiFeature");
+const axios = require("axios");
 const imagePrediction = require("../utils/imagePredictor");
 const TeachableMachine = require("@sashido/teachablemachine-node");
 
@@ -26,52 +27,79 @@ exports.createPost = async (req, res, next) => {
     const myCloud = await cloudinary.v2.uploader.upload(image, {
       folder: "artify/posts",
     });
+
+    const predict = await imgFunc(myCloud.secure_url);
+    // const imgData = data;
+    // console.log(predict);
     // let predict = [];
     // imagePrediction(req, res, myCloud.secure_url, function (error, response) {
-    //   return gobck(response, predict);
+    //   return gobck(response);
     // });
 
-    // function gobck(ress, predict) {
+    // function gobck(ress) {
     //   predict = ress;
     //   return ress;
     // }
     // console.log(predict);
     // if (response[0].class === "NonSensitive") {
-    //   await cloudinary.v2.uploader.destroy(myCloud.public_id);
-    //   return next(
-    //     new ErrorHandler("Image is sensitive" + response[0].class, 400)
+    //
     //   );
     // }
 
-    //  if (predict[0].class === "NonSensitive") {
-    fs.rmSync("./tmp", { recursive: true });
-    const postData = {
-      title,
-      description,
-      image: {
-        public_id: myCloud.public_id,
-        url: myCloud.secure_url,
-      },
-      category,
-      artist: req.user._id,
-      amount: 0,
-    };
-    if (isForSell) {
-      if (!amount) {
-        return next(new ErrorHandler("amount is required", 400));
+    console.log(predict);
+
+    if (predict.predictions[0].class === "NonSensitive") {
+      fs.rmSync("./tmp", { recursive: true });
+      const postData = {
+        title,
+        description,
+        image: {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        },
+        category,
+        artist: req.user._id,
+        amount: 0,
+      };
+      if (isForSell) {
+        if (!amount) {
+          return next(new ErrorHandler("amount is required", 400));
+        }
+        postData.amount = amount;
       }
-      postData.amount = amount;
+      const post = await Posts.create(postData);
+      const user = await User.findById(req.user._id);
+      user.posts.unshift(post._id);
+      user.save();
+    } else {
+      await cloudinary.v2.uploader.destroy(myCloud.public_id);
+      return next(
+        new ErrorHandler(
+          "Image is sensitive" + predict.predictions[0].class,
+          400
+        )
+      );
     }
-    const post = await Posts.create(postData);
-    const user = await User.findById(req.user._id);
-    user.posts.unshift(post._id);
-    user.save();
+
     res.status(201).json({
       success: true,
       message: "Post created",
     });
   } catch (error) {
     return next(new ErrorHandler(error.message, 503));
+  }
+};
+
+const imgFunc = async (imgUrl) => {
+  try {
+    const { data } = await axios.post(
+      "http://localhost:4001/api/v1/imageprediction",
+      { imgUrl: imgUrl },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    return data;
+  } catch (error) {
+    console.log(error);
   }
 };
 
