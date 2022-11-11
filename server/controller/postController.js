@@ -4,6 +4,7 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const cloudinary = require("cloudinary");
 const fs = require("fs");
 const ApiFeature = require("../utils/ApiFeature");
+const imagePrediction = require("../utils/imagePredictor");
 const TeachableMachine = require("@sashido/teachablemachine-node");
 
 const model = new TeachableMachine({
@@ -18,8 +19,6 @@ exports.createPost = async (req, res, next) => {
 
     const image = req.files.image.tempFilePath;
 
-    const predict = [];
-
     if (!title || !description || !category) {
       return next(new ErrorHandler("Required Field", 400));
     }
@@ -27,63 +26,52 @@ exports.createPost = async (req, res, next) => {
     const myCloud = await cloudinary.v2.uploader.upload(image, {
       folder: "artify/posts",
     });
+    // let predict = [];
+    // imagePrediction(req, res, myCloud.secure_url, function (error, response) {
+    //   return gobck(response, predict);
+    // });
 
-    model
-      .classify({
-        imageUrl: myCloud.secure_url,
-      })
-      .then((predictions) => {
-        console.log(predictions);
-        predict = predictions;
-        console.log("working ");
-        next();
-      })
-      .catch((e) => {
-        console.log("error", e);
-        res.status(500).send({
-          code: 500,
-          status: "fail",
-          message: "Something went wrong!",
-        });
-      });
+    // function gobck(ress, predict) {
+    //   predict = ress;
+    //   return ress;
+    // }
+    // console.log(predict);
+    // if (response[0].class === "NonSensitive") {
+    //   await cloudinary.v2.uploader.destroy(myCloud.public_id);
+    //   return next(
+    //     new ErrorHandler("Image is sensitive" + response[0].class, 400)
+    //   );
+    // }
 
-    if (predict[0].class === "InSensitive") {
-      fs.rmSync("./tmp", { recursive: true });
-      const postData = {
-        title,
-        description,
-        image: {
-          public_id: myCloud.public_id,
-          url: myCloud.secure_url,
-        },
-        category,
-        artist: req.user._id,
-        amount: 0,
-      };
-
-      if (isForSell) {
-        if (!amount) {
-          return next(new ErrorHandler("amount is required", 400));
-        }
-
-        postData.amount = amount;
+    //  if (predict[0].class === "NonSensitive") {
+    fs.rmSync("./tmp", { recursive: true });
+    const postData = {
+      title,
+      description,
+      image: {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      },
+      category,
+      artist: req.user._id,
+      amount: 0,
+    };
+    if (isForSell) {
+      if (!amount) {
+        return next(new ErrorHandler("amount is required", 400));
       }
-      const post = await Posts.create(postData);
-
-      const user = await User.findById(req.user._id);
-
-      user.posts.unshift(post._id);
-      user.save();
-      res.status(201).json({
-        success: true,
-        message: "Post created",
-      });
-    } else {
-      await cloudinary.v2.uploader.destroy(myCloud.public_id);
-      return next(new ErrorHandler("Image is sensitive", 400));
+      postData.amount = amount;
     }
+    const post = await Posts.create(postData);
+    const user = await User.findById(req.user._id);
+    user.posts.unshift(post._id);
+    user.save();
+    res.status(201).json({
+      success: true,
+      message: "Post created",
+    });
   } catch (error) {
-    return next(new ErrorHandler(error.message, 500));
+    return next(new ErrorHandler(error.message, 503));
   }
 };
 
