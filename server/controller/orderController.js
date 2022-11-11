@@ -40,7 +40,10 @@ exports.createOrder = async (req, res, next) => {
 
 exports.getMyOrder = async (req, res, next) => {
   try {
-    const orders = await Order.find({ buyer: req.user._id });
+    const orders = await Order.find({
+      buyer: req.user._id,
+      orderStatus: "Processing",
+    });
 
     res.status(200).json({ success: true, orders });
   } catch (error) {
