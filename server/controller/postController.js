@@ -23,17 +23,18 @@ exports.createPost = async (req, res, next) => {
     if (!title || !description || !category) {
       return next(new ErrorHandler("Required Field", 400));
     }
+
+    const myCloud = await cloudinary.v2.uploader.upload(image, {
+      folder: "artify/posts",
+    });
+
     model
       .classify({
-        imageUrl: "data:image/jpeg;base64," + imgUrl,
+        imageUrl: myCloud.secure_url,
       })
       .then((predictions) => {
         console.log(predictions);
-        res.json({
-          code: 200,
-          status: "success",
-          predictions,
-        });
+        predict = predictions;
         console.log("working ");
         next();
       })
@@ -46,43 +47,41 @@ exports.createPost = async (req, res, next) => {
         });
       });
 
-    // if (predict[0].class === "insensitive") {
-    // const myCloud = await cloudinary.v2.uploader.upload(image, {
-    //   folder: "artify/posts",
-    // });
-    // fs.rmSync("./tmp", { recursive: true });
-    // const postData = {
-    //   title,
-    //   description,
-    //   image: {
-    //     public_id: myCloud.public_id,
-    //     url: myCloud.secure_url,
-    //   },
-    //   category,
-    //   artist: req.user._id,
-    //   amount: 0,
-    // };
+    if (predict[0].class === "InSensitive") {
+      fs.rmSync("./tmp", { recursive: true });
+      const postData = {
+        title,
+        description,
+        image: {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        },
+        category,
+        artist: req.user._id,
+        amount: 0,
+      };
 
-    // if (isForSell) {
-    //   if (!amount) {
-    //     return next(new ErrorHandler("amount is required", 400));
-    //   }
+      if (isForSell) {
+        if (!amount) {
+          return next(new ErrorHandler("amount is required", 400));
+        }
 
-    //   postData.amount = amount;
-    // }
-    // const post = await Posts.create(postData);
+        postData.amount = amount;
+      }
+      const post = await Posts.create(postData);
 
-    // const user = await User.findById(req.user._id);
+      const user = await User.findById(req.user._id);
 
-    // user.posts.unshift(post._id);
-    // user.save();
-    // res.status(201).json({
-    //   success: true,
-    //   message: "Post created",
-    // });
-    // } else {
-    //   return next(new ErrorHandler("Image is sensitive", 400));
-    // }
+      user.posts.unshift(post._id);
+      user.save();
+      res.status(201).json({
+        success: true,
+        message: "Post created",
+      });
+    } else {
+      await cloudinary.v2.uploader.destroy(myCloud.public_id);
+      return next(new ErrorHandler("Image is sensitive", 400));
+    }
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }
