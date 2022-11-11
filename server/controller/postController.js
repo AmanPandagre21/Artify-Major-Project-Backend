@@ -50,6 +50,7 @@ exports.createPost = async (req, res, next) => {
 
     if (predict.predictions[0].class === "NonSensitive") {
       fs.rmSync("./tmp", { recursive: true });
+
       const postData = {
         title,
         description,
@@ -74,10 +75,7 @@ exports.createPost = async (req, res, next) => {
     } else {
       await cloudinary.v2.uploader.destroy(myCloud.public_id);
       return next(
-        new ErrorHandler(
-          "Image is sensitive" + predict.predictions[0].class,
-          400
-        )
+        new ErrorHandler("Image is " + predict.predictions[0].class, 400)
       );
     }
 
@@ -93,7 +91,7 @@ exports.createPost = async (req, res, next) => {
 const imgFunc = async (imgUrl) => {
   try {
     const { data } = await axios.post(
-      "http://localhost:4001/api/v1/imageprediction",
+      "https://artify-app-server.herokuapp.com/api/v1/imageprediction",
       { imgUrl: imgUrl },
       { headers: { "Content-Type": "application/json" } }
     );
