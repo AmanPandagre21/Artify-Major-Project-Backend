@@ -7,7 +7,7 @@ exports.createOrder = async (req, res, next) => {
     const {
       seller,
       shippingInfo,
-      paymentInfo,
+
       orderItem,
       itemsPrice,
       taxPrice,
