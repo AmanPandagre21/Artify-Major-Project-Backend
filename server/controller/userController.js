@@ -282,7 +282,7 @@ exports.updateUserProfile = async (req, res, next) => {
 
     if (name) user.name = name;
 
-    if (number) user.phone = number;
+    if (number) user.phone = Number("number");
 
     if (bio) user.bio = bio;
 
