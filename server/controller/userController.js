@@ -286,24 +286,28 @@ exports.updateUserProfile = async (req, res, next) => {
 
     if (bio) user.bio = bio;
 
-    if (user.avatar.public_id && avatar) {
-      await cloudinary.v2.uploader.destroy(
-        user.avatar.public_id && user.avatar.public_id
-      );
+    if (!req.files.avatar) {
+      await user.save();
+    } else {
+      if (user.avatar.public_id && avatar) {
+        await cloudinary.v2.uploader.destroy(
+          user.avatar.public_id && user.avatar.public_id
+        );
+      }
+
+      const mycloud = await cloudinary.v2.uploader.upload(avatar, {
+        folder: "artify/avatars",
+      });
+
+      fs.rmSync("./tmp", { recursive: true });
+
+      user.avatar = {
+        public_id: mycloud.public_id,
+        url: mycloud.secure_url,
+      };
+
+      await user.save();
     }
-
-    const mycloud = await cloudinary.v2.uploader.upload(avatar, {
-      folder: "artify/avatars",
-    });
-
-    fs.rmSync("./tmp", { recursive: true });
-
-    user.avatar = {
-      public_id: mycloud.public_id,
-      url: mycloud.secure_url,
-    };
-
-    await user.save();
 
     res.status(200).json({ success: true, message: "Profile Updated", user });
   } catch (error) {
