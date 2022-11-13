@@ -74,8 +74,7 @@ exports.getMyOrderHistory = async (req, res, next) => {
 
 exports.updateOrder = async (req, res, next) => {
   try {
-    const { orderId } = req.body;
-    const order = await Order.findByIdAndUpdate(orderId, {
+    const order = await Order.findByIdAndUpdate(req.params.id, {
       orderStatus: "Delivered",
     });
 
