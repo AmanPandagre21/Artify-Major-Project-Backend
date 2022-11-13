@@ -1,5 +1,6 @@
 const ErrorHandler = require("../utils/ErrorHandler");
 const Order = require("../model/orderModel");
+const sendEmail = require("../utils/sendMail");
 // create Order
 
 exports.createOrder = async (req, res, next) => {
@@ -7,7 +8,6 @@ exports.createOrder = async (req, res, next) => {
     const {
       seller,
       shippingInfo,
-
       orderItem,
       itemsPrice,
       taxPrice,
@@ -27,6 +27,12 @@ exports.createOrder = async (req, res, next) => {
       paidAt: Date.now(),
     });
 
+    // await sendEmail({
+    //   email: user.email,
+    //   subject: "Artify Password Recovery Mail",
+    //   message,
+    // });
+
     res.status(201).json({
       success: true,
       order,
@@ -43,7 +49,7 @@ exports.getMyOrder = async (req, res, next) => {
     const orders = await Order.find({
       buyer: req.user._id,
       orderStatus: "Processing",
-    }).populate("buyer orderItem");
+    }).populate("buyer seller orderItem");
 
     res.status(200).json({ success: true, orders });
   } catch (error) {
@@ -58,7 +64,7 @@ exports.getMyOrderHistory = async (req, res, next) => {
     const orders = await Order.find({
       buyer: req.user._id,
       orderStatus: "Delivered",
-    });
+    }).populate("buyer seller orderItem");
 
     res.status(200).json({ success: true, orders });
   } catch (error) {

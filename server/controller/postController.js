@@ -29,24 +29,6 @@ exports.createPost = async (req, res, next) => {
     });
 
     const predict = await imgFunc(myCloud.secure_url);
-    // const imgData = data;
-    // console.log(predict);
-    // let predict = [];
-    // imagePrediction(req, res, myCloud.secure_url, function (error, response) {
-    //   return gobck(response);
-    // });
-
-    // function gobck(ress) {
-    //   predict = ress;
-    //   return ress;
-    // }
-    // console.log(predict);
-    // if (response[0].class === "NonSensitive") {
-    //
-    //   );
-    // }
-
-    console.log(predict);
 
     if (predict.predictions[0].class === "NonSensitive") {
       fs.rmSync("./tmp", { recursive: true });
