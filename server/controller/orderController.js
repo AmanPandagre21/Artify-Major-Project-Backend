@@ -68,7 +68,7 @@ exports.getMyOrderHistory = async (req, res, next) => {
       orderStatus: "Delivered",
     })
       .populate("buyer seller orderItem")
-      .sort({ paidAt: -1 });
+      .sort([paidAt, 1]);
 
     res.status(200).json({ success: true, orders });
   } catch (error) {
