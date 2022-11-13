@@ -49,9 +49,7 @@ exports.getMyOrder = async (req, res, next) => {
     const orders = await Order.find({
       buyer: req.user._id,
       orderStatus: "Processing",
-    })
-      .populate("buyer seller orderItem")
-      .sort({ paidAt: 1 });
+    }).populate("buyer seller orderItem");
 
     res.status(200).json({ success: true, orders });
   } catch (error) {
@@ -66,9 +64,7 @@ exports.getMyOrderHistory = async (req, res, next) => {
     const orders = await Order.find({
       buyer: req.user._id,
       orderStatus: "Delivered",
-    })
-      .populate("buyer seller orderItem")
-      .sort([paidAt, 1]);
+    }).populate("buyer seller orderItem");
 
     res.status(200).json({ success: true, orders });
   } catch (error) {
