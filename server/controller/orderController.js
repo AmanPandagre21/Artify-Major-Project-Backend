@@ -78,7 +78,7 @@ exports.updateOrder = async (req, res, next) => {
       orderStatus: "Delivered",
     });
 
-    res.status(200).json({ success: true, orders });
+    res.status(200).json({ success: true, order });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }
