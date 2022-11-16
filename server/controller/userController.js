@@ -277,7 +277,9 @@ exports.updateUserProfile = async (req, res, next) => {
     const user = await User.findById(req.user._id);
 
     const { name, number, bio } = req.body;
-    const avatar = req.files.avatar.tempFilePath;
+    if (req.files.avatar) {
+      const avatar = req.files.avatar.tempFilePath;
+    }
 
     if (name) user.name = name;
 
@@ -285,7 +287,7 @@ exports.updateUserProfile = async (req, res, next) => {
 
     if (bio) user.bio = bio;
 
-    if (!avatar) {
+    if (!req.files.avatar) {
       await user.save();
     } else {
       if (user.avatar.public_id && avatar) {
