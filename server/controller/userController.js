@@ -289,10 +289,8 @@ exports.updateUserProfile = async (req, res, next) => {
     } else {
       const avatar = req.files.avatar.tempFilePath;
 
-      if (user.avatar.public_id && avatar) {
-        await cloudinary.v2.uploader.destroy(
-          user.avatar.public_id && user.avatar.public_id
-        );
+      if (user.avatar.public_id) {
+        await cloudinary.v2.uploader.destroy(user.avatar.public_id);
       }
 
       const mycloud = await cloudinary.v2.uploader.upload(avatar, {
