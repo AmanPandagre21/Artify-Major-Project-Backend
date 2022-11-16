@@ -284,7 +284,9 @@ exports.updateUserProfile = async (req, res, next) => {
 
     if (bio) user.bio = bio;
 
+    // console.log(req.files.avatar);
     if (!req.files.avatar) {
+      console.log("sdfs-");
       await user.save();
     } else {
       const avatar = req.files.avatar.tempFilePath;
