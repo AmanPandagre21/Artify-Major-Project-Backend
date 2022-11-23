@@ -14,7 +14,8 @@ class ApiFeature {
           },
         }
       : {};
-    if (this.queryStr.keyword) {
+
+    if (keyword === {}) {
       this.query = this.query
         .find({ ...keyword })
         .sort({ createdAt: -1 })
