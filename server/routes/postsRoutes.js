@@ -8,12 +8,15 @@ const {
   deletePost,
   getPosts,
   postDetails,
+  getPostsBySearch,
 } = require("../controller/postController");
 const { imagePredictor } = require("../utils/imagePredictor");
 
 router.route("/me/create-post").post(authMiddleware, createPost);
 
 router.route("/posts").get(authMiddleware, getPosts);
+
+router.route("/search/post").get(authMiddleware, getPostsBySearch);
 
 router.route("/post-details/:id").get(authMiddleware, postDetails);
 

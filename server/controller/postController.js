@@ -86,15 +86,36 @@ const imgFunc = async (imgUrl) => {
 // get Posts
 exports.getPosts = async (req, res, next) => {
   try {
-    const apiFeature = new ApiFeature(Posts.find(), req.query).search();
-    // .filter();
-
-    const posts = await apiFeature.query;
+    const posts = await Posts.find()
+      .sort({ createdAt: -1 })
+      .populate("artist category likes");
 
     res.status(201).json({
       success: true,
       posts,
     });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+};
+
+// get Posts
+exports.getPostsBySearch = async (req, res, next) => {
+  try {
+    if (!req.query.keyword) {
+      const posts = await Posts.find().limit(4);
+      res.status(201).json({
+        success: true,
+        posts,
+      });
+    } else {
+      const apiFeature = new ApiFeature(Posts.find(), req.query).search();
+      const posts = await apiFeature.query;
+      res.status(201).json({
+        success: true,
+        posts,
+      });
+    }
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }
