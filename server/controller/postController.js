@@ -102,8 +102,11 @@ exports.getPosts = async (req, res, next) => {
 // get Posts
 exports.getPostsBySearch = async (req, res, next) => {
   try {
-    if (!req.query.keyword) {
-      const posts = await Posts.find().limit(4);
+    if (req.query.keyword === "") {
+      const posts = await Posts.find()
+        .limit(10)
+        .sort({ createdAt: -1 })
+        .populate("artist category likes");
       res.status(201).json({
         success: true,
         posts,
