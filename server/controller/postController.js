@@ -102,23 +102,12 @@ exports.getPosts = async (req, res, next) => {
 // get Posts
 exports.getPostsBySearch = async (req, res, next) => {
   try {
-    if (req.query.keyword === "") {
-      const posts = await Posts.find()
-        .limit(10)
-        .sort({ createdAt: -1 })
-        .populate("artist category likes");
-      res.status(201).json({
-        success: true,
-        posts,
-      });
-    } else {
-      const apiFeature = new ApiFeature(Posts.find(), req.query).search();
-      const posts = await apiFeature.query;
-      res.status(201).json({
-        success: true,
-        posts,
-      });
-    }
+    const apiFeature = new ApiFeature(Posts.find(), req.query).search();
+    const posts = await apiFeature.query;
+    res.status(201).json({
+      success: true,
+      posts,
+    });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }

@@ -14,11 +14,18 @@ class ApiFeature {
           },
         }
       : {};
-
-    this.query = this.query
-      .find({ ...keyword })
-      .sort({ createdAt: -1 })
-      .populate("artist category likes");
+    if (this.queryStr.keyword) {
+      this.query = this.query
+        .find({ ...keyword })
+        .sort({ createdAt: -1 })
+        .populate("artist category likes");
+    } else {
+      this.query = this.query
+        .find({ ...keyword })
+        .limit(12)
+        .sort({ createdAt: -1 })
+        .populate("artist category likes");
+    }
 
     return this;
   }
