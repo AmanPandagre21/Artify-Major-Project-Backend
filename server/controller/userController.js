@@ -378,6 +378,9 @@ exports.getArtistPosts = async (req, res, next) => {
 exports.reportQuery = async (req, res, next) => {
   try {
     const { name, number, email, query } = req.body;
+    if (!name || !number || !email || !email || !query) {
+      return next(new ErrorHandler("All Fields Are Mandatory", 400));
+    }
 
     const message = `Name = ${name} email = ${email} number = ${number} Query = ${query}`;
     // send otp to mail
