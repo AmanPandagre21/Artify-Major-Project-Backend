@@ -159,7 +159,10 @@ exports.updatePost = async (req, res, next) => {
 
     if (req.body.outOfStock) {
       post.outOfStock = true;
+    } else {
+      post.outOfStock = false;
     }
+
     await post.save();
     res.status(200).json({
       success: true,
