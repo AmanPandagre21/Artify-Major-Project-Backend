@@ -282,8 +282,10 @@ exports.updateUserProfile = async (req, res, next) => {
     if (name) user.name = name;
 
     if (number) {
-      if (validator.isMobilePhone(number.toString(), "en-IN"))
-        user.phone = Number(number);
+      if (!validator.isMobilePhone(number.toString(), "en-IN")) {
+        return next(new ErrorHandler("Enter valid 10 digit Phone Number", 400));
+      }
+      user.phone = Number(number);
     }
 
     if (bio) user.bio = bio;
