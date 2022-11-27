@@ -23,7 +23,7 @@ connectDatabase();
 
 // Listening the Server
 app.listen(PORT, () => {
-  console.log(`Server Is Listening on Port Number ${PORT}`);
+  console.log(`Server Listen at Port Number ${PORT}`);
 });
 
 // Unhandled Promise Rejection
