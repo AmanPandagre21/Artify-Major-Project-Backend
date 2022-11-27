@@ -11,6 +11,7 @@ const sendEmail = require("../utils/sendMail");
 const cloudinary = require("cloudinary");
 const ErrorHandler = require("../utils/ErrorHandler");
 const fs = require("fs");
+const validator = require("validator");
 
 /* ------- User Registration ---------*/
 
