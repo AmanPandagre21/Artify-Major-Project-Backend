@@ -280,7 +280,10 @@ exports.updateUserProfile = async (req, res, next) => {
 
     if (name) user.name = name;
 
-    if (number) user.phone = Number(number);
+    if (number) {
+      if (validator.isMobilePhone(number.toString(), "en-IN"))
+        user.phone = Number(number);
+    }
 
     if (bio) user.bio = bio;
 
