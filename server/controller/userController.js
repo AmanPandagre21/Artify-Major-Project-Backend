@@ -189,6 +189,24 @@ exports.resetPassword = async (req, res, next) => {
       return next(new ErrorHandler("All fields are Mandatory", 400));
     }
 
+    if (
+      !validator.isStrongPassword(password, {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+        returnScore: false,
+      })
+    ) {
+      return next(
+        new ErrorHandler(
+          "Password Should Contain - 1 Lowercase Letter, 1 Uppercase Letter, 1 Number , 1 Special Character and its minimum length will be 8",
+          400
+        )
+      );
+    }
+
     // check password or confirm password are some or not
     if (password !== confirmPassword) {
       return next(
@@ -230,6 +248,24 @@ exports.changePassword = async (req, res, next) => {
 
     if (!password || !confirmPassword || !oldPassword) {
       return next(new ErrorHandler("All fields are Mandatory", 400));
+    }
+
+    if (
+      !validator.isStrongPassword(password, {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+        returnScore: false,
+      })
+    ) {
+      return next(
+        new ErrorHandler(
+          "Password Should Contain - 1 Lowercase Letter, 1 Uppercase Letter, 1 Number , 1 Special Character and its minimum length will be 8",
+          400
+        )
+      );
     }
 
     // check old password is correct or not
