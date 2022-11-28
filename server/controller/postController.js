@@ -18,17 +18,20 @@ exports.createPost = async (req, res, next) => {
     const { title, description, category, isForSell, amount, imgUrl } =
       req.body;
 
+    const image = req.files.image.tempFilePath;
+
+    console.log(image);
+
     if (!title || !description || !category || !req.files) {
       return next(new ErrorHandler("Required Field", 400));
     }
-
-    const image = req.files.image.tempFilePath;
 
     const myCloud = await cloudinary.v2.uploader.upload(image, {
       folder: "artify/posts",
     });
 
     const predict = await imgFunc(myCloud.secure_url);
+    console.log(predict);
     if (predict.predictions[0].class === "NonSensitive") {
       fs.rmSync("./tmp", { recursive: true });
 
