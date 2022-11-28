@@ -29,8 +29,7 @@ exports.createPost = async (req, res, next) => {
     });
 
     const predict = await imgFunc(myCloud.secure_url);
-    console.log(predict);
-    console.log(predict.predictions);
+
     if (predict.predictions[0].class === "NonSensitive") {
       fs.rmSync("./tmp", { recursive: true });
 
@@ -78,7 +77,6 @@ const imgFunc = async (imgUrl) => {
       { imgUrl: imgUrl },
       { headers: { "Content-Type": "application/json" } }
     );
-    console.log(data);
     return data;
   } catch (error) {
     console.log(error);
