@@ -20,7 +20,7 @@ exports.createPost = async (req, res, next) => {
 
     const image = req.files.image.tempFilePath;
 
-    if (!title || !description || !category || !req.files) {
+    if (!title || !description || !category) {
       return next(new ErrorHandler("Required Field", 400));
     }
 
@@ -29,7 +29,8 @@ exports.createPost = async (req, res, next) => {
     });
 
     const predict = await imgFunc(myCloud.secure_url);
-    console.log(`ff -  ${predict}`);
+    console.log(predict);
+    console.log(predict.predictions);
     if (predict.predictions[0].class === "NonSensitive") {
       fs.rmSync("./tmp", { recursive: true });
 
@@ -77,7 +78,7 @@ const imgFunc = async (imgUrl) => {
       { imgUrl: imgUrl },
       { headers: { "Content-Type": "application/json" } }
     );
-    console.log(`gg - ${data}`);
+    console.log(data);
     return data;
   } catch (error) {
     console.log(error);
