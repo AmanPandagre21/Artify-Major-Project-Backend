@@ -73,7 +73,7 @@ exports.createPost = async (req, res, next) => {
 const imgFunc = async (imgUrl) => {
   try {
     const { data } = await axios.post(
-      "https://artify-app-server.herokuapp.com/api/v1/imageprediction",
+      "https://artify-backend.onrender.com/api/v1/imageprediction",
       { imgUrl: imgUrl },
       { headers: { "Content-Type": "application/json" } }
     );
